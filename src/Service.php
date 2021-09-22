@@ -111,6 +111,25 @@ class Service
         $this->setConfig("token", $response['token']);
         return $response['token'];
     }
+    
+    public function exit()
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "{$this->config['base_url']}/earsiv-services/assos-login");
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $this->curl_http_headers);
+        curl_setopt($ch, CURLOPT_REFERER, "{$this->config['base_url']}/intragiris.html");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([
+            "assoscmd" => "logout",
+            "rtype" => "json",
+            "token" => $this->config['token']
+        ]));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $server_response = curl_exec($ch);
+        $response = json_decode($server_response, true);
+        curl_close($ch);
+        return $response;
+    }        
 
     public function runCommand($command, $page_name, $data = null, $url_encode = false)
     {
